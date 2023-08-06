@@ -2,3 +2,5 @@ django
 channels["daphne"]
 channels-redis
 djangorestframework
+PyJWT
+django-cors-headers
