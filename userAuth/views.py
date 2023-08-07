@@ -10,6 +10,9 @@ import jwt, datetime
 
 # Create your views here.
 
+"""
+API endpoint to register new users
+"""
 class RegistrationView(APIView):
     permission_classes = [AllowAny]
     def post(self, request):
@@ -18,7 +21,9 @@ class RegistrationView(APIView):
         serializer.save()
         return Response(serializer.data)
 
-    
+"""
+API endpoint to login
+"""    
 class LoginView(APIView):
     permission_classes = [AllowAny]
     def post(self, request):
@@ -50,6 +55,9 @@ class LoginView(APIView):
 
         return response
 
+"""
+API endpoint to fetch current user
+"""
 class UserView(APIView):
     permission_classes = [AllowAny] 
     def get(self, request):
@@ -69,7 +77,9 @@ class UserView(APIView):
 
         return Response(serializer.data)
 
-
+"""
+API endpoint to logout the currently logged in user
+"""
 class LogoutView(APIView):
     permission_classes = [AllowAny]
 
