@@ -15,6 +15,7 @@ API endpoint to register new users
 """
 class RegistrationView(APIView):
     permission_classes = [AllowAny]
+
     def post(self, request):
         serializer = userSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -25,6 +26,7 @@ class RegistrationView(APIView):
 API endpoint to login
 """    
 class LoginView(APIView):
+
     permission_classes = [AllowAny]
     def post(self, request):
         email = request.data['email']
@@ -60,6 +62,7 @@ API endpoint to fetch current user
 """
 class UserView(APIView):
     permission_classes = [AllowAny] 
+
     def get(self, request):
         token = request.COOKIES.get('jwt')
         
