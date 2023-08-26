@@ -50,7 +50,7 @@ class LoginView(APIView):
         token = jwt.encode(payload,'secret',algorithm='HS256')
 
         response = Response()
-        response.set_cookie(key='jwt',value=token,httponly=True)
+        response.set_cookie(key='jwt',value=token,httponly=True,samesite='None',secure=True)
         response.data = {
             'jwt': token
         }
@@ -61,7 +61,7 @@ class LoginView(APIView):
 API endpoint to fetch current user
 """
 class UserView(APIView):
-    permission_classes = [AllowAny] 
+    permission_classes = [AllowAny]
 
     def get(self, request):
         token = request.COOKIES.get('jwt')
