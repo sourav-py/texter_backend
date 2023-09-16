@@ -3,33 +3,34 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.exceptions import AuthenticationFailed
-from .serializers import userSerializer
+#from .serializers import userSerializer, ProfileSerializer
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
+
+from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope
+
 import jwt, datetime
+
+from twilio.rest import Client
+from django.http import HttpResponse
+
+
+from . import helpers
+from .models import OTPObject
+
+import os
+
 
 # Create your views here.
 
 """
-API endpoint to register new users
-"""
-class RegistrationView(APIView):
-    permission_classes = [AllowAny]
-
-    def post(self, request):
-        serializer = userSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
-
-"""
 API endpoint to login
-"""    
+
 class LoginView(APIView):
 
     permission_classes = [AllowAny]
     def post(self, request):
-        email = request.data['email']
+        phone = request.data['phone']
         password = request.data['password']
 
         user = User.objects.filter(email=email).first()
@@ -57,9 +58,6 @@ class LoginView(APIView):
 
         return response
 
-"""
-API endpoint to fetch current user
-"""
 class UserView(APIView):
     permission_classes = [AllowAny]
 
@@ -80,9 +78,6 @@ class UserView(APIView):
 
         return Response(serializer.data)
 
-"""
-API endpoint to logout the currently logged in user
-"""
 class LogoutView(APIView):
     permission_classes = [AllowAny]
 
@@ -94,3 +89,35 @@ class LogoutView(APIView):
         } 
         
         return response
+    
+
+"""
+
+class OTPSenderView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
+        TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
+        TWILIO_DEFAULT_CALLERID = os.getenv("TWILIO_DEFAULT_CALLERID")
+
+        phoneNumber = request.data['phoneNumber']
+
+        otp = helpers.generateOTP()
+
+        #Create an otp object
+        otp_validity = datetime.datetime.now() + datetime.timedelta(minutes=5)
+
+        otp_instance = OTPObject.objects.create(otp=otp,phone=phoneNumber,validTill=otp_validity) 
+        otp_instance.save()
+        print(otp_instance)
+
+        client = Client(TWILIO_ACCOUNT_SID,TWILIO_AUTH_TOKEN) 
+        message = client.messages.create(
+                                body='Here is your OTP: ' + otp,
+                                from_=TWILIO_DEFAULT_CALLERID,
+                                to=phoneNumber)
+    
+        return HttpResponse('Message Sent Successfully..')
+
+
+        

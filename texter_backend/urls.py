@@ -22,4 +22,5 @@ urlpatterns = [
     path('chat/',include("chat.urls")),
     path('api-auth/',include("rest_framework.urls")),
     path('auth/',include("userAuth.urls")),
+    path('oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
 ]

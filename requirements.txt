@@ -4,3 +4,5 @@ channels-redis
 djangorestframework
 PyJWT
 django-cors-headers
+django-phonenumber-field[phonenumbers]
+django-twilio
