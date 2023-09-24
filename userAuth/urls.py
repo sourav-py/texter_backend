@@ -10,4 +10,5 @@ urlpatterns = [
 
     #Debug/Dummy URLs
     path("sendotp/",views.OTPSenderView.as_view(),name="OTPSenderView"),
+    path("verifyotp/",views.OTPVerificationView.as_view(),name="OTPVerificationView"),
 ]

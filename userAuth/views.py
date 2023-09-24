@@ -16,7 +16,7 @@ from django.http import HttpResponse
 
 
 from . import helpers
-from .models import OTPObject
+from .models import OTPObject,Profile
 
 import os
 
@@ -104,12 +104,16 @@ class OTPSenderView(APIView):
 
         otp = helpers.generateOTP()
 
-        #Create an otp object
-        otp_validity = datetime.datetime.now() + datetime.timedelta(minutes=5)
+        otpValidity = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=5)
 
-        otp_instance = OTPObject.objects.create(otp=otp,phone=phoneNumber,validTill=otp_validity) 
-        otp_instance.save()
-        print(otp_instance)
+        #Fetch and delete the last otp object corresponding to this phone number
+        lastOTPObject = OTPObject.objects.get(phone=phoneNumber)
+        lastOTPObject.delete()
+
+        #Create and store a new otp object corresponding to this phone number
+        otpInstance = OTPObject.objects.create(otp=otp,phone=phoneNumber,validTill=otpValidity) 
+        otpInstance.save()
+        print(otpInstance)
 
         client = Client(TWILIO_ACCOUNT_SID,TWILIO_AUTH_TOKEN) 
         message = client.messages.create(
@@ -117,7 +121,57 @@ class OTPSenderView(APIView):
                                 from_=TWILIO_DEFAULT_CALLERID,
                                 to=phoneNumber)
     
-        return HttpResponse('Message Sent Successfully..')
+        #return HttpResponse('Message Sent Successfully..')
+
+        response = Response()
+        response.data = {
+            'message' : 'OTP sent successfully!!'
+        }
+
+        return response
+
+
+
+
+class OTPVerificationView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self,request):
+        phoneNumber = request.data['phoneNumber']
+        otpInput = request.data['otp']
+
+        #Fetch the otp object corresponding to received phone number
+        otpObject = OTPObject.objects.get(phone=phoneNumber)
+        
+        otp = otpObject.otp
+        validTill = otpObject.validTill
+
+        #DEBUG: Check time difference between the entered otp and the stored otp
+        print((datetime.datetime.now(datetime.timezone.utc) - validTill).total_seconds())
+
+        #Check the validity of the otp
+        otpValid = False
+        if str(otpInput) == str(otp) and (datetime.datetime.now(datetime.timezone.utc) - validTill).total_seconds()/60 < 5:
+            otpValid = True
+
+        print("OTP Valid: ",otpValid) 
+
+        if otpValid:
+            if not Profile.objects.filter(phone = phoneNumber).exists():
+                profileObject = Profile.objects.create(phone=phoneNumber)   
+                profileObject.save()
+            
+            return HttpResponse('Success!!')
+        else:
+            return HttpResponse('Failure!!')
+            
+
+
+        #Save the user profile upto here (just the phone number)
+
+
+
+
 
 
         
