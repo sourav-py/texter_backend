@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.exceptions import AuthenticationFailed
-#from .serializers import userSerializer, ProfileSerializer
+from .serializers import ProfileSerializer
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 
@@ -156,18 +156,33 @@ class OTPVerificationView(APIView):
 
         print("OTP Valid: ",otpValid) 
 
+        response = Response()
         if otpValid:
             if not Profile.objects.filter(phone = phoneNumber).exists():
                 profileObject = Profile.objects.create(phone=phoneNumber)   
                 profileObject.save()
-            
-            return HttpResponse('Success!!')
+
+            profile = Profile.objects.get(phone = phoneNumber) 
+            payload = {
+                'id': profile.id,
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
+                'iat': datetime.datetime.utcnow()
+            }
+
+            token = jwt.encode(payload,'secret',algorithm='HS256')
+            serializedProfile = ProfileSerializer(profile)
+
+            response = Response()
+            response.set_cookie(key='jwt',value=token,httponly=True,samesite='None',secure=True)
+            response.data = serializedProfile.data
         else:
-            return HttpResponse('Failure!!')
+            response.status = 400
+            response.body = {
+                'message' : "OTP is invalid. Can't create a session"
+            } 
             
+        return response
 
-
-        #Save the user profile upto here (just the phone number)
 
 
 

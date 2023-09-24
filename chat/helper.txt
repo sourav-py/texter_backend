@@ -1,8 +1,8 @@
  ======== chat rooms ======
 
- chatroomid, members
+chatroomid, members
  
-Focus on p2p chat only for now
+Focuat onls on p2p chy for now
 try to ignore the delete chat history feature
 
 tables
@@ -35,3 +35,5 @@ TODO:
     Create a view to fetch all the chatrooms that a user is part of(Add participations in any way)
     Read about meta functions to fetch info about the chatroom (runtime/compile time ...)
     
+TODO MAIN:
+    APIs to create participation, chatrooms (what to pass as parameter?)
