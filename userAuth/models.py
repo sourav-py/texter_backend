@@ -5,6 +5,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 class Profile(models.Model):
     phone = PhoneNumberField(null=False,blank=False,unique=True)
+    name = models.CharField(max_length=20,blank=False,null=False)
     date_joined = models.DateTimeField(auto_now_add =True)
     bio = models.CharField(max_length=200)
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)

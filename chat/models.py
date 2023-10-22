@@ -8,10 +8,13 @@ class ChatRoom(models.Model):
         choices = (("DIRECT","DIRECT"),("GROUP","GROUP")),
         default = "DIRECT"
     )   
+    name = models.CharField(max_length=100,blank=True,null=True)
+    avatar = models.ImageField(upload_to='avatars/',null=True, blank=True)
+
 
 class Participation(models.Model):
-    user = models.ManyToManyField(Profile,blank=False)
-    chatroom = models.ManyToManyField(ChatRoom,blank=False)
+    user = models.ForeignKey(Profile,models.CASCADE,blank=False)
+    chatroom = models.ForeignKey(ChatRoom,models.CASCADE,blank=False)
 
 class Message(models.Model):
     sender = models.ForeignKey(
