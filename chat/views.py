@@ -3,6 +3,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+import json
 
 from .models import ChatRoom,Participation
 from userAuth.models import Profile
@@ -25,7 +26,7 @@ def room(request,room_name):
 """
 
 #Fetch phone numbers, create a chat room and participation objects
-class CreateParticipation(APIView):
+class Participations(APIView):
 
     permission_classes = [AllowAny]
 
@@ -49,13 +50,13 @@ class CreateParticipation(APIView):
         return response 
 
 
-class FetchChatRooms(APIView):
+class ChatRooms(APIView):
     permission_classes = [ AllowAny ]
     def post(self,request):
         #Fetch chat rooms that the user is a part of
         
-        PhoneNumber = PhoneNumber.from_string(request.data['phoneNumber'])
-        profileObject = Profile.objects.get(phone=PhoneNumber)
+        phoneNumber = PhoneNumber.from_string(request.data['phoneNumber'])
+        profileObject = Profile.objects.get(phone=phoneNumber)
 
         ParticipationSet = Participation.objects.filter(user=profileObject)
 
@@ -69,12 +70,13 @@ class FetchChatRooms(APIView):
                 {
                     "chatroomId": chatroom.id,
                     "chatroomName": fetchChatRoomName(chatroom,user),
-                    "chatroomPicture": fetchChatRoomPicture(chatroom,user)
+                    "chatroomPicture": fetchChatRoomAvatar(chatroom,user)
                 }
             )
 
         response = Response()
-        response.data = json.dumps(chatrooms,indent=2)
+        #response.data = json.dumps(chatrooms,indent=2)
+        response.data = chatrooms
 
         return response
         
