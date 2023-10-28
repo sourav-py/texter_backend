@@ -3,10 +3,13 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.renderers import JSONRenderer
 import json
 
-from .models import ChatRoom,Participation
+from .models import ChatRoom,Participation,Message
 from userAuth.models import Profile
+
+from .serializers import MessageSerializer
 
 from phonenumber_field.phonenumber import PhoneNumber
 
@@ -76,7 +79,31 @@ class ChatRooms(APIView):
 
         response = Response()
         #response.data = json.dumps(chatrooms,indent=2)
-        response.data = chatrooms
+        response.data = JSONRenderer().render(chatrooms)
 
         return response
         
+
+class Messages(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self,request):
+
+        #Pull chatroom id from request data
+        #and fetch messages sent to that chatroom
+
+        chatRoomId = request.data['chatRoomId']
+        chatRoom = ChatRoom.objects.get(id=chatRoomId)
+
+        messages = Message.objects.filter(chatroom = chatRoom)
+
+        responseData = []
+
+        for message in messages:
+            serializedMessage = MessageSerializer(message)
+            responseData.append(serializedMessage.data)
+
+
+        response = Response()
+        response.data = responseData
+        return response
