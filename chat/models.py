@@ -29,4 +29,10 @@ class Message(models.Model):
     )
     body = models.CharField(max_length=200)
     timestamp = models.DateTimeField(auto_now_add=True)
+
+class UnsentMessage(models.Model):
+    user = models.ForeignKey(Profile,models.CASCADE,blank=False)
+    message = models.ForeignKey(Message,models.CASCADE,blank=False)
+
+
     

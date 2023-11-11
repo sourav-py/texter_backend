@@ -4,5 +4,5 @@ from .models import Message
 class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
-        fields = ["sender", "chatroom", "body", "timestamp"]
+        exclude = ["chatroom"]
         depth = 1 
