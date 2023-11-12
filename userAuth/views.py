@@ -6,6 +6,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from .serializers import ProfileSerializer
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
+from django.utils import timezone
 
 from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope
 
@@ -16,7 +17,7 @@ from django.http import HttpResponse
 
 
 from . import helpers
-from .models import OTPObject,Profile
+from .models import OTPObject,Profile, UserActivity
 
 import os
 
@@ -184,9 +185,31 @@ class OTPVerificationView(APIView):
         return response
 
 
+class UserActivityStatusView(APIView):
+    
+    permission_classes = [AllowAny]
 
-
-
-
+    def post(self,request):
+        print("------- UserActivityStatus API -----------")
+        userId = request.data['userId']
+        
+        activityStatusObj = UserActivity.objects.get(user_id = userId)
+        lastseenTimestamp = activityStatusObj.last_seen
 
         
+        response = Response()
+
+        #If last_seen timestamp is within the last 5 seconds, send the user status as "online" 
+        #Else, send the last_seen timestamp in local timezone.
+        if (timezone.now() - lastseenTimestamp).total_seconds() <= 10:
+            response.data = {
+                "status": "online"
+            }
+        else:
+            localTimezone = timezone.get_current_timezone()
+            lastseenTimestamp = lastseenTimestamp.astimezone(localTimezone)
+            response.data = {
+                "status": lastseenTimestamp.strftime("%Y-%m-%d %H:%M:%S %Z")
+            }
+
+        return response        

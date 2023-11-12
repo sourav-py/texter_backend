@@ -11,4 +11,6 @@ urlpatterns = [
 
     path("sendotp/",views.OTPSenderView.as_view(),name="OTPSenderView"),
     path("verifyotp/",views.OTPVerificationView.as_view(),name="OTPVerificationView"),
+
+    path("activitystatus/",views.UserActivityStatusView.as_view(),name="UserActivityStatusView"),
 ]
