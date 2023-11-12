@@ -3,10 +3,13 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.renderers import JSONRenderer
 import json
 
-from .models import ChatRoom,Participation
+from .models import ChatRoom,Participation,Message, UnsentMessage
 from userAuth.models import Profile
+
+from .serializers import MessageSerializer
 
 from phonenumber_field.phonenumber import PhoneNumber
 
@@ -20,12 +23,8 @@ def room(request,room_name):
 
 
 """
-
-::::::PARTICIPATION VIEWS::::::::
-
+    API to create a participations for a newly created chatroom
 """
-
-#Fetch phone numbers, create a chat room and participation objects
 class Participations(APIView):
 
     permission_classes = [AllowAny]
@@ -50,6 +49,9 @@ class Participations(APIView):
         return response 
 
 
+"""
+API to fetch all the chatrooms that a particular user is a part of
+"""
 class ChatRooms(APIView):
     permission_classes = [ AllowAny ]
     def post(self,request):
@@ -76,7 +78,59 @@ class ChatRooms(APIView):
 
         response = Response()
         #response.data = json.dumps(chatrooms,indent=2)
-        response.data = chatrooms
+        response.data = JSONRenderer().render(chatrooms)
 
         return response
         
+
+
+"""
+    API to fetch messages sent to a particular chatroom
+"""
+class Messages(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self,request):
+
+        #Pull chatroom id from request data
+        #and fetch messages sent to that chatroom
+
+        chatRoomId = request.data['chatRoomId']
+        chatRoom = ChatRoom.objects.get(id=chatRoomId)
+
+        messages = Message.objects.filter(chatroom = chatRoom)
+
+        responseData = []
+
+        for message in messages:
+            serializedMessage = MessageSerializer(message)
+            responseData.append(serializedMessage.data)
+
+
+        response = Response()
+        response.data = responseData
+        return response
+
+
+
+"""
+    API to confirm the message reception for a particular user and message
+"""
+class MessageDelivery(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self,request):
+        messageId = request.data['messageId']
+        userId = request.data['userId']
+
+        userObj = Profile.objects.get(id=userId)
+        messageObj = Message.objects.get(id=messageId)
+
+        #Fetch the unsent message instance corresponding the recieved userId and messageId and delete the instance.
+        unsentMessageObj = UnsentMessage.objects.get(message=messageObj,user=userObj)
+        if unsentMessageObj:
+            unsentMessageObj.delete()
+
+        response = Response()
+        return response
+

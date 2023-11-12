@@ -57,7 +57,7 @@ class LoginView(APIView):
         }
 
         return response
-
+"""
 class UserView(APIView):
     permission_classes = [AllowAny]
 
@@ -78,6 +78,7 @@ class UserView(APIView):
 
         return Response(serializer.data)
 
+
 class LogoutView(APIView):
     permission_classes = [AllowAny]
 
@@ -91,7 +92,6 @@ class LogoutView(APIView):
         return response
     
 
-"""
 
 class OTPSenderView(APIView):
     permission_classes = [AllowAny]
