@@ -190,26 +190,48 @@ class UserActivityStatusView(APIView):
     permission_classes = [AllowAny]
 
     def post(self,request):
-        print("------- UserActivityStatus API -----------")
-        userId = request.data['userId']
-        
-        activityStatusObj = UserActivity.objects.get(user_id = userId)
-        lastseenTimestamp = activityStatusObj.last_seen
 
-        
-        response = Response()
+        #response = Response()
 
-        #If last_seen timestamp is within the last 5 seconds, send the user status as "online" 
-        #Else, send the last_seen timestamp in local timezone.
-        if (timezone.now() - lastseenTimestamp).total_seconds() <= 10:
-            response.data = {
-                "status": "online"
+        #The request is to fetch the activity status of a user
+        if 'action' in request.query_params and request.query_params['action'] == 'fetch':
+            userId = request.data['userId']
+            
+            activityStatusObj = UserActivity.objects.get(user_id = userId)
+            lastseenTimestamp = activityStatusObj.last_seen
+
+            response = Response() 
+
+            #If last_seen timestamp is within the last 5 seconds, send the user status as "online" 
+            #Else, send the last_seen timestamp in local timezone.
+            if (timezone.now() - lastseenTimestamp).total_seconds() <= 5:
+                response.data = {
+                    "status": "online"
+                }
+            else:
+                localTimezone = timezone.get_current_timezone()
+                lastseenTimestamp = lastseenTimestamp.astimezone(localTimezone)
+                response.data = {
+                    "status": lastseenTimestamp.strftime("%Y-%m-%d %H:%M:%S %Z")
+                }
+            return response        
+        #The request is to update the activity status of a user
+        elif 'action' in request.query_params and request.query_params['action'] == 'update':
+
+            userId = request.data['userId']
+            activityStatusObj = UserActivity.objects.get(user_id = userId)
+            activityStatusObj.last_seen = timezone.now()
+            activityStatusObj.save()
+            response = Response()
+            response.data  = {
+                "User activity status updated!!"
             }
+            return response
+        #Invalid request
         else:
-            localTimezone = timezone.get_current_timezone()
-            lastseenTimestamp = lastseenTimestamp.astimezone(localTimezone)
+            print("Invalid request!!")
+            response = Response(status=400)
             response.data = {
-                "status": lastseenTimestamp.strftime("%Y-%m-%d %H:%M:%S %Z")
+                "message": "Invalid request params!!"
             }
-
-        return response        
+            return response
