@@ -6,6 +6,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from .serializers import ProfileSerializer
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
+from django.utils import timezone
 
 from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope
 
@@ -16,7 +17,7 @@ from django.http import HttpResponse
 
 
 from . import helpers
-from .models import OTPObject,Profile
+from .models import OTPObject,Profile, UserActivity
 
 import os
 
@@ -184,9 +185,53 @@ class OTPVerificationView(APIView):
         return response
 
 
+class UserActivityStatusView(APIView):
+    
+    permission_classes = [AllowAny]
 
+    def post(self,request):
 
+        #response = Response()
 
+        #The request is to fetch the activity status of a user
+        if 'action' in request.query_params and request.query_params['action'] == 'fetch':
+            userId = request.data['userId']
+            
+            activityStatusObj = UserActivity.objects.get(user_id = userId)
+            lastseenTimestamp = activityStatusObj.last_seen
 
+            response = Response() 
 
-        
+            #If last_seen timestamp is within the last 5 seconds, send the user status as "online" 
+            #Else, send the last_seen timestamp in local timezone.
+            if (timezone.now() - lastseenTimestamp).total_seconds() <= 5:
+                response.data = {
+                    "status": "online"
+                }
+            else:
+                localTimezone = timezone.get_current_timezone()
+                lastseenTimestamp = lastseenTimestamp.astimezone(localTimezone)
+                response.data = {
+                    "status": lastseenTimestamp.strftime("%Y-%m-%d %H:%M:%S %Z")
+                }
+            return response        
+        #The request is to update the activity status of a user
+        elif 'action' in request.query_params and request.query_params['action'] == 'update':
+
+            userId = request.data['userId']
+            activityStatusObj = UserActivity.objects.get(user_id = userId)
+            activityStatusObj.last_seen = timezone.now()
+            activityStatusObj.save()
+            response = Response()
+            response.data  = {
+                "User activity status updated!!"
+            }
+            return response
+        #Invalid request
+        else:
+            print("Invalid request!!")
+            response = Response(status=400)
+            response.data = {
+                "message": "Invalid request params!!"
+            }
+            return response
