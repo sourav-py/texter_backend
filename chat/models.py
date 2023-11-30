@@ -11,10 +11,16 @@ class ChatRoom(models.Model):
     name = models.CharField(max_length=100,blank=True,null=True)
     avatar = models.ImageField(upload_to='avatars/',null=True, blank=True)
 
+    def __str__(self):
+        return str(self.id) + "\tmode: " + self.mode
+
 
 class Participation(models.Model):
     user = models.ForeignKey(Profile,models.CASCADE,blank=False)
     chatroom = models.ForeignKey(ChatRoom,models.CASCADE,blank=False)
+
+    def __str__(self):
+        return "user: " + self.user.username +"\tchatroom: " + str(self.chatroom.id)
 
 class Message(models.Model):
     sender = models.ForeignKey(

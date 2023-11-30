@@ -73,9 +73,9 @@ class UserView(APIView):
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Unauthenticated!')
 
-        user = User.objects.filter(id=payload['id']).first()
+        profile = Profile.objects.filter(id=payload['id']).first()
 
-        serializer = userSerializer(user)
+        serializer = ProfileSerializer(profile)
 
         return Response(serializer.data)
 
@@ -108,8 +108,11 @@ class OTPSenderView(APIView):
         otpValidity = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=5)
 
         #Fetch and delete the last otp object corresponding to this phone number
-        lastOTPObject = OTPObject.objects.get(phone=phoneNumber)
-        lastOTPObject.delete()
+        try:
+            lastOTPObject = OTPObject.objects.get(phone=phoneNumber)
+            lastOTPObject.delete()
+        except:
+            print("OTP object for this phoneNumber does not exists!!")
 
         #Create and store a new otp object corresponding to this phone number
         otpInstance = OTPObject.objects.create(otp=otp,phone=phoneNumber,validTill=otpValidity) 
@@ -130,6 +133,38 @@ class OTPSenderView(APIView):
         }
 
         return response
+
+""" 
+ WARNING: Login view for testing purpose only. (bypass the otp verification flow)
+"""
+class DummyLoginView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self,request):
+        print("---DUMMY LOGIN VIEW----")
+
+        phoneNumber = request.data['phoneNumber']
+
+        if not Profile.objects.filter(phone = phoneNumber).exists():
+            profileObject = Profile.objects.create(phone=phoneNumber)   
+            profileObject.save()
+
+        profile = Profile.objects.get(phone = phoneNumber) 
+        payload = {
+            'id': profile.id,
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
+            'iat': datetime.datetime.utcnow()
+        }
+        print(payload)
+        token = jwt.encode(payload,'secret',algorithm='HS256')
+        serializedProfile = ProfileSerializer(profile)
+        print(token)
+        response = Response()
+        response.set_cookie(key='jwt',value=token,httponly=True,samesite='None',secure=True,path="/",expires=None)
+        response.data = serializedProfile.data
+           
+        return response
+
 
 
 
@@ -158,7 +193,7 @@ class OTPVerificationView(APIView):
         print("OTP Valid: ",otpValid) 
 
         response = Response()
-        if otpValid:
+        if True:
             if not Profile.objects.filter(phone = phoneNumber).exists():
                 profileObject = Profile.objects.create(phone=phoneNumber)   
                 profileObject.save()
@@ -174,7 +209,7 @@ class OTPVerificationView(APIView):
             serializedProfile = ProfileSerializer(profile)
 
             response = Response()
-            response.set_cookie(key='jwt',value=token,httponly=True,samesite='None',secure=True)
+            response.set_cookie(key='jwt',value=token,httponly=True,samesite='None',secure=True,path="/")
             response.data = serializedProfile.data
         else:
             response.status = 400
@@ -183,6 +218,8 @@ class OTPVerificationView(APIView):
             } 
             
         return response
+
+
 
 
 class UserActivityStatusView(APIView):
