@@ -80,6 +80,8 @@ class ChatRooms(APIView):
         #response.data = json.dumps(chatrooms,indent=2)
         response.data = JSONRenderer().render(chatrooms)
 
+        print(response.data)
+
         return response
         
 

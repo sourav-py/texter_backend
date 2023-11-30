@@ -26,6 +26,7 @@ SECRET_KEY = 'django-insecure-y#@pdahrf==kkyizop+(v-0c7n*a%7_g_19-dk$iclidqaz&-b
 DEBUG = True
 
 ALLOWED_HOSTS = []
+CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1:3000","http://localhost:3000"]
 
 
 # Application definition
@@ -75,6 +76,14 @@ MIDDLEWARE = [
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_HEADERS = [
+    'access-control-allow-origin',
+    'authorization',
+    'content-type',
+    'x-csrftoken',
+    # ... other headers
+]
  
  
 TEMPLATES = [
