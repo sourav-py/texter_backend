@@ -23,7 +23,12 @@ def fetchChatRoomAvatar(chatroom,user):
         #of the other user present in this chatroom
         try:
             otherParticipation = Participation.objects.filter(chatroom=chatroom).exclude(user=user)[0]
-            return otherParticipation.user.avatar.url
+            if otherParticipation.user.avatar:
+                return otherParticipation.user.avatar.url
+            else:
+                return None
         except:
-            user.avatar.url
-
+            if user.avatar:
+                user.avatar.url
+            else:
+                return None
