@@ -70,11 +70,13 @@ class ChatRooms(APIView):
 
             chatrooms.append(
                 {
-                    "chatroomId": chatroom.id,
-                    "chatroomName": fetchChatRoomName(chatroom,user),
-                    "chatroomPicture": fetchChatRoomAvatar(chatroom,user)
+                    "id": chatroom.id,
+                    "name": fetchChatRoomName(chatroom,user),
+                    "avatar": fetchChatRoomAvatar(chatroom,user),
+                    "last_updated": chatroom.last_updated
                 }
             )
+        chatrooms = sorted(chatrooms,key = lambda x: x['last_updated'],reverse=True)
 
         response = Response()
         #response.data = json.dumps(chatrooms,indent=2)

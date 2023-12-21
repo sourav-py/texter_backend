@@ -5,4 +5,3 @@ class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
         exclude = ["chatroom"]
-        depth = 1 

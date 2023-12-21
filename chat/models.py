@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from userAuth.models import Profile
 # Create your models here.
 
@@ -10,6 +11,7 @@ class ChatRoom(models.Model):
     )   
     name = models.CharField(max_length=100,blank=True,null=True)
     avatar = models.ImageField(upload_to='avatars/',null=True, blank=True)
+    last_updated = models.DateTimeField(default=timezone.now())
 
     def __str__(self):
         return str(self.id) + "\tmode: " + self.mode
