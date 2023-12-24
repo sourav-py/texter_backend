@@ -7,13 +7,11 @@ from django.utils import timezone
 
 class Profile(models.Model):
     phone = PhoneNumberField(null=False,blank=False,unique=True)
-    username = models.CharField(max_length=20,blank=False,null=False)
+    name = models.CharField(max_length=25,null=True)
     date_joined = models.DateTimeField(auto_now_add =True)
     bio = models.CharField(max_length=200)
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
 
-    def __str__(self):
-        return self.username
 
 class OTPObject(models.Model):
     otp = models.CharField(null=False,blank=False,max_length=10) 
@@ -25,7 +23,5 @@ class UserActivity(models.Model):
     user = models.ForeignKey(Profile,models.CASCADE,null=False)
     last_seen = models.DateTimeField(default = timezone.now())
 
-    def __str__(self):
-        return self.user.username
 
 

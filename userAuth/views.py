@@ -1,16 +1,18 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FileUploadParser
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.exceptions import AuthenticationFailed, NotFound
 from .serializers import ProfileSerializer
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.utils import timezone
-
+from django.core.files.base import ContentFile
+from django.http import HttpResponse
 from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope
 
-import jwt, datetime
+import jwt, datetime, base64
 
 from twilio.rest import Client
 from django.http import HttpResponse
@@ -103,6 +105,13 @@ class OTPSenderView(APIView):
 
         phoneNumber = request.data['phoneNumber']
 
+        newProfile = False
+
+        if not Profile.objects.filter(phone = phoneNumber).exists():
+            profileObject = Profile.objects.create(phone=phoneNumber)   
+            profileObject.save()
+            newProfile = True
+
         otp = helpers.generateOTP()
 
         otpValidity = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=5)
@@ -119,6 +128,7 @@ class OTPSenderView(APIView):
         otpInstance.save()
         print(otpInstance)
 
+        """
         client = Client(TWILIO_ACCOUNT_SID,TWILIO_AUTH_TOKEN) 
         message = client.messages.create(
                                 body='Here is your OTP: ' + otp,
@@ -126,9 +136,10 @@ class OTPSenderView(APIView):
                                 to=phoneNumber)
     
         #return HttpResponse('Message Sent Successfully..')
-
+        """
         response = Response()
         response.data = {
+            'newProfile': newProfile,
             'message' : 'OTP sent successfully!!'
         }
 
@@ -272,3 +283,43 @@ class UserActivityStatusView(APIView):
                 "message": "Invalid request params!!"
             }
             return response
+
+class ProfileUpdate(APIView):
+    permission_classes = [AllowAny]
+
+    def options(self,request):
+        # Handle preflight request
+        response = HttpResponse()
+        response["Access-Control-Allow-Origin"] = "*"  # Replace with your allowed origins
+        return response
+
+    def post(self,request):
+        phoneNumber = request.data['phone']
+        profileObj = Profile.objects.get(phone=phoneNumber)
+        serializedProfile = ProfileSerializer(instance=profileObj,data=request.data)
+        print(serializedProfile)
+        if serializedProfile.is_valid():
+            serializedProfile.save()
+            response = Response()
+            return response
+        else:
+            print("Invalid data!!")
+            response = Response()
+            response.status = 500
+            response.message = "Invalid data"
+            return response
+
+class FetchUser(APIView):
+
+    permission_classes = [AllowAny] 
+
+    def post(self,request):
+        phoneNumber = request.data['phoneNumber']
+        try:
+            profileObj = Profile.objects.get(phone=phoneNumber)
+            serializedProfile = ProfileSerializer(profileObj)
+            response = Response()
+            response.data = serializedProfile.data
+            return response
+        except:
+            raise NotFound("User with this phone number does not exist!!")
