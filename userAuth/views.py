@@ -20,6 +20,7 @@ from django.http import HttpResponse
 
 from . import helpers
 from .models import OTPObject,Profile, UserActivity
+from chat.models import ChatRoom, Participation
 
 import os
 
@@ -110,6 +111,7 @@ class OTPSenderView(APIView):
         if not Profile.objects.filter(phone = phoneNumber).exists():
             profileObject = Profile.objects.create(phone=phoneNumber)   
             profileObject.save()
+            print("new profile!!!")
             newProfile = True
 
         otp = helpers.generateOTP()
@@ -243,12 +245,18 @@ class UserActivityStatusView(APIView):
 
         #The request is to fetch the activity status of a user
         if 'action' in request.query_params and request.query_params['action'] == 'fetch':
+
+            chatroomId = request.data['chatroomId']
             userId = request.data['userId']
-            
-            activityStatusObj = UserActivity.objects.get(user_id = userId)
+
+            otherParticipation = Participation.objects.filter(chatroom_id=chatroomId).exclude(user_id=userId)[0]
+            otherUser = otherParticipation.user 
+
+            activityStatusObj = UserActivity.objects.get(user=otherUser)
             lastseenTimestamp = activityStatusObj.last_seen
 
-            response = Response() 
+
+            response = Response()
 
             #If last_seen timestamp is within the last 5 seconds, send the user status as "online" 
             #Else, send the last_seen timestamp in local timezone.
@@ -260,13 +268,14 @@ class UserActivityStatusView(APIView):
                 localTimezone = timezone.get_current_timezone()
                 lastseenTimestamp = lastseenTimestamp.astimezone(localTimezone)
                 response.data = {
-                    "status": lastseenTimestamp.strftime("%Y-%m-%d %H:%M:%S %Z")
+                    "status": "last seen: " + lastseenTimestamp.strftime("%Y-%m-%d %H:%M %Z")
                 }
             return response        
         #The request is to update the activity status of a user
         elif 'action' in request.query_params and request.query_params['action'] == 'update':
 
             userId = request.data['userId']
+
             activityStatusObj = UserActivity.objects.get(user_id = userId)
             activityStatusObj.last_seen = timezone.now()
             activityStatusObj.save()
