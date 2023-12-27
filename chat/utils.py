@@ -1,4 +1,6 @@
 from userAuth.models import Profile
+from rest_framework import renderers
+from userAuth.serializers import ProfileSerializer
 from .models import Participation
 
 def fetchChatRoomName(chatroom,user):
@@ -9,9 +11,15 @@ def fetchChatRoomName(chatroom,user):
         #of the other user present in this chatroom
         try:
             otherParticipation = Participation.objects.filter(chatroom=chatroom).exclude(user=user)[0]
-            return otherParticipation.user.username
+            if otherParticipation.user.name:
+                return otherParticipation.user.name
+            else:
+                return str(otherParticipation.user.phone)
         except:
-            return user.username
+            if user.name:
+                return user.name
+            else:
+                return str(user.phone)
         
 
 

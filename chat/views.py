@@ -31,16 +31,23 @@ class Participations(APIView):
 
     def post(self,request):
         phoneNumbers = request.data['phoneNumbers']
+        mode = request.data['mode']
+
+        print(phoneNumbers)
+        print(mode)
 
         #Create a new chatroom
-        chatroomObject = ChatRoom.objects.create(mode="DIRECT")
+        chatroomObject = ChatRoom.objects.create(mode=mode)
         chatroomObject.save()
+
+        print("Created chatroom!!!");
 
         #Create a participation object for each of the 
         #recieved phone numbers with the newly created
         #chat room.
         for phoneNumber in phoneNumbers:
             profileObject = Profile.objects.get(phone = PhoneNumber.from_string(phoneNumber))
+            print("profile object::::",profileObject.phone)
             participationObject = Participation.objects.create(user=profileObject,chatroom = chatroomObject)
             participationObject.save()
 
@@ -67,6 +74,7 @@ class ChatRooms(APIView):
         for participation in ParticipationSet:
             chatroom = participation.chatroom
             user = participation.user 
+            
 
             chatrooms.append(
                 {
