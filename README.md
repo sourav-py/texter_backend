@@ -8,13 +8,23 @@ Following features are leveraged for the application with this project:
 - Managing messages, users, chatrooms and other data.
 - Exposing end-points to fetch users' data, messages data, chatrooms data etc.
 
-> [!NOTE]
-> Updating the following sections soon.
-
 #### Database design
+![db_design](/media/docs/erd.png)
 
-#### Folder structure
+#### APIs
+Authentication
+- `/auth/user/`
+- `/auth/sendotp/`
+- `/auth/verifyotp/`
+- `/auth/updateprofile/`
+- `/auth/activitystatus/`
+- `/auth/fetchuser/`
+- `/auth/logout/`
 
+Chat
+- `/chat/participation/`
+- `/chat/chatrooms/`
+- `/chat/messages/`
 #### Setup
 
 #### Known issues
