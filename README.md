@@ -1,5 +1,14 @@
 # texter: backend
-### Back-end codebase for 'texter', a web socket based chat application.
+
+### Index
+- [Introduction](https://github.com/sourav-py/texter_backend/edit/main/README.md#back-end-codebase-for-texter-a-web-socket-based-chat-application)
+- [Database design](https://github.com/sourav-py/texter_backend/edit/main/README.md#database-design)
+- [APIs](https://github.com/sourav-py/texter_backend/edit/main/README.md#apis)
+- [Setup](https://github.com/sourav-py/texter_backend/edit/main/README.md#setup)
+- [Issues](https://github.com/sourav-py/texter_backend/edit/main/README.md#known-issues)
+- [Future developments](https://github.com/sourav-py/texter_backend/edit/main/README.md#future-developments)
+
+#### Back-end codebase for 'texter', a web socket based chat application.
 This repository is a `django` project which handles the back-end processes for a web-sockets based chat application.
 
 Following features are leveraged for the application with this project:
