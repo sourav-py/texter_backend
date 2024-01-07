@@ -44,8 +44,9 @@ class ChatConsumer(WebsocketConsumer):
         #payload = jwt.decode(jwtToken,'secret',algorithms=['HS256'])
         #userId = payload['id']
 
-        messageObj = Message.objects.create(sender_id=userId,chatroom_id=int(self.room_name),body=message)
-        messageObj.save()
+        if messageType != "typing":
+            messageObj = Message.objects.create(sender_id=userId,chatroom_id=int(self.room_name),body=message)
+            messageObj.save()
 
         chatroomObj = ChatRoom.objects.get(id=int(self.room_name))
         chatroomObj.last_updated = timezone.now()

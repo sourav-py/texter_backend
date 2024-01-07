@@ -87,6 +87,7 @@ class LogoutView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
+        token = request.COOKIES.get('jwt')
         response = Response()
         response.delete_cookie('jwt')
         response.data = {
@@ -206,7 +207,7 @@ class OTPVerificationView(APIView):
         print("OTP Valid: ",otpValid) 
 
         response = Response()
-        if True:
+        if otpValid:
             if not Profile.objects.filter(phone = phoneNumber).exists():
                 profileObject = Profile.objects.create(phone=phoneNumber)   
                 profileObject.save()
@@ -309,8 +310,7 @@ class ProfileUpdate(APIView):
         print(serializedProfile)
         if serializedProfile.is_valid():
             serializedProfile.save()
-            response = Response()
-            return response
+            return Response(serializedProfile.data)
         else:
             print("Invalid data!!")
             response = Response()
