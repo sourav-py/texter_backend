@@ -1,21 +1,29 @@
 # texter: backend
 
 ### Index
-- [Introduction](https://github.com/sourav-py/texter_backend/tree/main?tab=readme-ov-file#back-end-codebase-for-texter-a-web-socket-based-chat-application)
+- [Introduction](https://github.com/sourav-py/texter_backend/tree/main?tab=readme-ov-file#introduction)
 - [Database design](https://github.com/sourav-py/texter_backend/tree/main?tab=readme-ov-file#database-design)
 - [APIs](https://github.com/sourav-py/texter_backend/tree/main?tab=readme-ov-file#apis)
 - [Setup](https://github.com/sourav-py/texter_backend/tree/main?tab=readme-ov-file#setup)
 - [Issues](https://github.com/sourav-py/texter_backend/tree/main?tab=readme-ov-file#known-issues)
 - [Future developments](https://github.com/sourav-py/texter_backend/tree/main?tab=readme-ov-file#future-developments)
 
-#### Back-end codebase for 'texter', a web socket based chat application.
-This repository is a `django` project which handles the back-end processes for a web-sockets based chat application.
+#### Introduction.
+This repository is a `django` project which handles the back-end processes for a web-sockets based chat application, texter.
 
 Following features are leveraged for the application with this project:
 - SMS OTP based authentication (token auth.) 
 - Web sockets client/server communication
 - Managing messages, users, chatrooms and other data.
 - Exposing end-points to fetch users' data, messages data, chatrooms data etc.
+
+
+#### Tech stack:
+- [Django](https://www.djangoproject.com/)
+- [Django-rest-framework](https://www.django-rest-framework.org/)
+- [Django-channels](https://channels.readthedocs.io/)
+- [Redis](https://redis.io/) : *Cache to manage web sockets message queue*
+
 
 #### Database design
 ![db_design](/media/docs/erd.png)
