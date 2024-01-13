@@ -43,6 +43,10 @@ Chat
 - `/chat/chatrooms/`
 - `/chat/messages/`
 #### Setup
+- Clone the repository
+- Install the dependencies `pip3 install requirements.txt`
+- Run the redis server `docker run -p 6379:6379 -d redis:5`
+- Run the django server `python3 manage.py runserver`
 
 #### Known issues
 
