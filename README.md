@@ -4,6 +4,8 @@
 - [Introduction](https://github.com/sourav-py/texter_backend/tree/main?tab=readme-ov-file#introduction)
 - [Database design](https://github.com/sourav-py/texter_backend/tree/main?tab=readme-ov-file#database-design)
 - [APIs](https://github.com/sourav-py/texter_backend/tree/main?tab=readme-ov-file#apis)
+- [Authentication](https://github.com/sourav-py/texter_backend/tree/main?tab=readme-ov-file#authentication)
+- [Web Sockets](https://github.com/sourav-py/texter_backend/tree/main?tab=readme-ov-file#web-sockets)
 - [Setup](https://github.com/sourav-py/texter_backend/tree/main?tab=readme-ov-file#setup)
 - [Issues](https://github.com/sourav-py/texter_backend/tree/main?tab=readme-ov-file#known-issues)
 - [Future developments](https://github.com/sourav-py/texter_backend/tree/main?tab=readme-ov-file#future-developments)
@@ -42,6 +44,15 @@ Chat
 - `/chat/participation/`
 - `/chat/chatrooms/`
 - `/chat/messages/`
+#### Authentication
+Token based authentication flow is implemented with this project where a cookie set on user's browser after succesful verification of users' phone number. Overall flow for the authentication process is as follows:
+- User enters their phone number
+- A verification code is sent to their number (Twilio)
+- User enters the otp
+- Back-end verifies the otp, sets a cookie in the response object and sends the response to the client (user's browser)
+  
+#### Web-Sockets 
+
 #### Setup
 - Clone the repository
 - Install the dependencies `pip3 install requirements.txt`
