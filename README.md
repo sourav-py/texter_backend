@@ -49,6 +49,6 @@ Chat
 - Run the django server `python3 manage.py runserver`
 
 #### Known issues
-
+- [API endpoints protection](https://github.com/sourav-py/texter_backend/issues/12)
 #### Future developments
-
+- [Messages encryption](https://github.com/sourav-py/texter_backend/issues/10)
