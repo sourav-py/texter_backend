@@ -1,6 +1,5 @@
 *.sh
 
 db.sqlite3
-*pycache*
-*.pyc 
+*.pyc
 *migrations*

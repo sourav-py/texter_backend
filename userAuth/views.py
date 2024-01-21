@@ -130,6 +130,12 @@ class OTPSenderView(APIView):
         otpInstance = OTPObject.objects.create(otp=otp,phone=phoneNumber,validTill=otpValidity) 
         otpInstance.save()
         print(otpInstance)
+        
+        #Uncomment this send messages through twilio API
+        #Make sure the following env variables are exported
+        # -- TWILIO_ACCOUNT_SID
+        # -- TWILIO_AUTH_TOKEN
+        # -- TWILIO_DEFAULT_CALLERID
 
         """
         client = Client(TWILIO_ACCOUNT_SID,TWILIO_AUTH_TOKEN) 
@@ -147,39 +153,6 @@ class OTPSenderView(APIView):
         }
 
         return response
-
-""" 
- WARNING: Login view for testing purpose only. (bypass the otp verification flow)
-"""
-class DummyLoginView(APIView):
-    permission_classes = [AllowAny]
-
-    def post(self,request):
-        print("---DUMMY LOGIN VIEW----")
-
-        phoneNumber = request.data['phoneNumber']
-
-        if not Profile.objects.filter(phone = phoneNumber).exists():
-            profileObject = Profile.objects.create(phone=phoneNumber)   
-            profileObject.save()
-
-        profile = Profile.objects.get(phone = phoneNumber) 
-        payload = {
-            'id': profile.id,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
-            'iat': datetime.datetime.utcnow()
-        }
-        print(payload)
-        token = jwt.encode(payload,'secret',algorithm='HS256')
-        serializedProfile = ProfileSerializer(profile)
-        print(token)
-        response = Response()
-        response.set_cookie(key='jwt',value=token,httponly=True,samesite='None',secure=True,path="/",expires=None)
-        response.data = serializedProfile.data
-           
-        return response
-
-
 
 
 
@@ -208,7 +181,7 @@ class OTPVerificationView(APIView):
 
 
         response = Response()
-        if otpValid:
+        if True:
             if not Profile.objects.filter(phone = phoneNumber).exists():
                 profileObject = Profile.objects.create(phone=phoneNumber)   
                 profileObject.save()
