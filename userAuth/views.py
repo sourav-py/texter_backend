@@ -206,7 +206,6 @@ class OTPVerificationView(APIView):
 
         print("OTP Valid: ",otpValid) 
 
-        response = Response()
         if otpValid:
             if not Profile.objects.filter(phone = phoneNumber).exists():
                 profileObject = Profile.objects.create(phone=phoneNumber)   
@@ -226,7 +225,7 @@ class OTPVerificationView(APIView):
             response.set_cookie(key='jwt',value=token,httponly=True,samesite='None',secure=True,path="/")
             response.data = serializedProfile.data
         else:
-            response.status = 400
+            response = Response(status=400)
             response.body = {
                 'message' : "OTP is invalid. Can't create a session"
             } 
