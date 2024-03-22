@@ -77,6 +77,8 @@ CORS_ORIGIN_ALLOW_ALL = True
 ALLOWED_HOSTS = ['.vercel.app'] 
 CORS_ALLOW_CREDENTIALS = True
 
+CORS_ORIGIN_WHITELIST = ['https://texter-frontend.vercel.app',]
+
 CORS_ALLOW_METHODS = [
     'GET',
     'OPTIONS',
