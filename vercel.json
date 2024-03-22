@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "texter_backend/asgi.py", "use": "@vercel/python" }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "texter_backend/asgi.py" }
+  ],
+  "env": {
+    "DJANGO_SETTINGS_MODULE": "texter_backend.settings"
+  }
+}
