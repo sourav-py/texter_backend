@@ -63,9 +63,9 @@ OAUTH2_PROVIDER = {
 }
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -73,29 +73,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ORIGIN_ALLOW_ALL = True
 ALLOWED_HOSTS = ['.vercel.app'] 
+
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = ['https://texter-frontend.vercel.app',]
 
-CORS_ORIGIN_WHITELIST = ['https://texter-frontend.vercel.app',]
-
-CORS_ALLOW_METHODS = [
-    'GET',
-    'OPTIONS',
-    'POST',
-    'PATCH',
-    'PUT',
-    'DELETE'
-]
-
-CORS_ALLOW_HEADERS = [
-    'access-control-allow-origin',
-    'authorization',
-    'content-type',
-    'x-csrftoken',
-    'cache-control'
-    # ... other headers
-]
 
  
  
