@@ -96,7 +96,16 @@ class LogoutView(APIView):
         
         return response
     
+class TestView(APIView):
+    permission_classes = [AllowAny]
 
+    def get(self,request):
+        response = Response()
+        response.data = {
+            "message": "success"
+        }
+
+        return response
 
 class OTPSenderView(APIView):
     permission_classes = [AllowAny]

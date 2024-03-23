@@ -13,4 +13,6 @@ urlpatterns = [
 
     path("activitystatus/",views.UserActivityStatusView.as_view(),name="UserActivityStatusView"),
     path("fetchuser/",views.FetchUser.as_view(),name="FetchUser"),
+
+    path("test/",views.TestView.as_view(),name="TestView"),
 ]
