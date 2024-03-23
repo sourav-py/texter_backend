@@ -151,7 +151,8 @@ class OTPSenderView(APIView):
             'newProfile': newProfile,
             'message' : 'OTP sent successfully!!'
         }
-
+        response["Access-Control-Allow-Origin"] = "https://texter-frontend.vercel.app"
+        response["Access-Control-Allow-Credentials"] = "true"  # If credentials are needed
         return response
 
 
