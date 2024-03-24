@@ -76,7 +76,7 @@ MIDDLEWARE = [
 ALLOWED_HOSTS = ['.vercel.app'] 
 
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = ['https://texter-frontend.vercel.app:3000',]
+CORS_ALLOWED_ORIGINS = ['https://texter-frontend.vercel.app',]
 
 CORS_ALLOWED_HEADERS = [
     'Content-Type',
