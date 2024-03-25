@@ -1,4 +1,4 @@
-twilio.sh
+*.sh
 
 db.sqlite3
 *.pyc
