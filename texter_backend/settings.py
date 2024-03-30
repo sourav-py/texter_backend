@@ -73,7 +73,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ALLOWED_HOSTS = ['.vercel.app'] 
+ALLOWED_HOSTS = ['.vercel.app','.pythonanywherer.com'] 
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = ['https://texter-frontend.vercel.app',]
