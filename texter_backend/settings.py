@@ -73,10 +73,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ALLOWED_HOSTS = ['localhost','127.0.0.1','.vercel.app'] 
+ALLOWED_HOSTS = ['localhost','127.0.0.1'] 
 
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = ['http://localhost:3001','http://127.0.0.1:3001','https://texter-frontend.vercel.app',]
+CORS_ALLOWED_ORIGINS = ['http://localhost:3001','http://127.0.0.1:3001']
 
 
  
