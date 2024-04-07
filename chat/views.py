@@ -74,6 +74,16 @@ class ChatRooms(APIView):
         for participation in ParticipationSet:
             chatroom = participation.chatroom
             user = participation.user 
+
+            lastMessage = Message.objects.filter(chatroom=chatroom).order_by('-timestamp').first()
+
+            lastMessageText = ""
+            lastMessageTimestampString = ""
+            if lastMessage:
+                lastMessageText = lastMessage.body 
+                lastMessageTimestampString = timestampMetaString(lastMessage.timestamp)
+            
+
             
 
             chatrooms.append(
@@ -81,7 +91,9 @@ class ChatRooms(APIView):
                     "id": chatroom.id,
                     "name": fetchChatRoomName(chatroom,user),
                     "avatar": fetchChatRoomAvatar(chatroom,user),
-                    "last_updated": chatroom.last_updated
+                    "last_updated": chatroom.last_updated,
+                    "last_message": lastMessageText,
+                    "timestamp_str": lastMessageTimestampString
                 }
             )
         chatrooms = sorted(chatrooms,key = lambda x: x['last_updated'],reverse=True)

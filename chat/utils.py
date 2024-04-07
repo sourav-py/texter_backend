@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from userAuth.models import Profile
 from rest_framework import renderers
 from userAuth.serializers import ProfileSerializer
@@ -40,3 +41,16 @@ def fetchChatRoomAvatar(chatroom,user):
                 user.avatar.url
             else:
                 return None
+
+
+def timestampMetaString(timestamp):
+    today = datetime.now()
+    yesterday = today - timedelta(days=1)
+
+    if timestamp.date() == today.date():
+        return timestamp.strftime("%H:%M")
+    elif timestamp.date() == yesterday.date():
+        return "yesterday"
+    else:
+        return timestamp.strftime("%Y/%m/%d")
+
